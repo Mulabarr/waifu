@@ -16,6 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from waifu.views import main_page_url, redirect_to
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', main_page_url, name='main_page'),
+    path('<sh_url>', redirect_to, name='redir')
 ]
