@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {%block title%}WAIFU{%endblock%}
 {%block content%}
+---WAIFU---
 <form action = '{% url "main_page" %}' method="post">
     {{ form.as_p }}
     <p>Enter your URL:<input type = "text" name = 'main_url'/></p>
     {{ valid }}
-    <a href = '{{ host }}{{ link }}'>{{ link }}</a>
+    <a href = '{{ link }}'>{{ host }}{{ link }}</a>
     <p><input type = "submit" value = "Convert!" name = "submit"/></p>
 </form>
 {%endblock%}

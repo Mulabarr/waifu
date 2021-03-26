@@ -1,19 +1,21 @@
-from random import randint
+import random
+
+from django.contrib.sites.models import Site
+from django.http import HttpRequest
 
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from waifu.models import UrlModel
 from datetime import datetime
 
-HOST = 'http://127.0.0.1:8000/'
 
 
 def generate_short_url():
     alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
     shorturl = ''
     for i in range(5):
-        ind = randint(0, 62)
-        char = alphabet[ind]
+        char = random.choice(alphabet)
         shorturl += char
     return shorturl
 
@@ -31,24 +33,33 @@ def main_url_filter(main_url):
 def main_page_url(request):
     if request.method == 'POST':
         url = request.POST.get('main_url')
-        main_url = url.lower()
+        if url[:7] == 'http://' or url[:8] == 'https://':
+            main_url = url.lower
+        else:
+            main_url = 'http://' + url.lower()
         if not UrlModel.objects.filter(main_url=main_url):
             time = str(datetime.now())
             short_url = generate_short_url()
             while UrlModel.objects.filter(short_url=short_url) is True:
                 short_url = generate_short_url()
             UrlModel.objects.create(main_url=main_url, short_url=short_url, time_add=time, click=0)
+            url1 = reverse('redir', args=[short_url])
+            dom = request.get_host()
             context = {
                 'valid': f'Link generated! Your link: ',
-                'link': f'{HOST}{short_url}'
+                'link': f'{url1}',
+                'host': f'{dom}'
             }
             return render(request, 'main_page.html', context)
         else:
             model = main_url_filter(main_url)
             short_url = model.short_url
+            url1 = reverse('redir', args=[short_url])
+            dom = request.get_host()
             context = {
                 'valid': f'This URL has already been converted. Link: ',
-                'link': f'{HOST}{short_url}'
+                'link': f'{url1}',
+                'host': f'{dom}'
             }
             return render(request, 'main_page.html', context)
     else:
