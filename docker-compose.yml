@@ -1,0 +1,16 @@
+version: '3.3'
+
+services:
+  web:
+    build: .
+    command: python /waifu/manage.py runserver 0.0.0.0:8000
+    volumes:
+    - .:/waifu
+    ports:
+    - 8000:8000
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
