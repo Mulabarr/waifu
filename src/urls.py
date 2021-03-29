@@ -18,8 +18,12 @@ from django.urls import path
 
 from waifu.views import main_page_url, redirect_to
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main_page_url, name='main_page'),
     path('<short_url>', redirect_to, name='redir')
-]
+] + static(settings.MEDIA_URL,
+           document_root=settings.MEDIA_URL)
